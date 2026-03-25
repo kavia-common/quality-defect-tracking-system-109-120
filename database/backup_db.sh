@@ -8,10 +8,13 @@ DB_USER="kaviasqlite"
 DB_PASSWORD="kaviadefaultpassword"
 DB_PORT="5000"
 
+# Canonical SQLite path (aligned with Django + tooling)
+CANONICAL_SQLITE_DB="${SQLITE_DB:-/home/kavia/workspace/code-generation/quality-defect-tracking-system-109-120/database/myapp.db}"
+
 # SQLite check and backup
-if [ -f "${DB_NAME}" ]; then
+if [ -f "${CANONICAL_SQLITE_DB}" ]; then
     echo "Backing up SQLite database..."
-    cp "${DB_NAME}" "database_backup.db"
+    cp "${CANONICAL_SQLITE_DB}" "database_backup.db"
     echo "✓ Backup saved to database_backup.db"
     exit 0
 fi
@@ -35,7 +38,7 @@ fi
 if mysqladmin ping -h localhost -P ${DB_PORT} --silent 2>/dev/null || \
    sudo mysqladmin ping --socket=/var/run/mysqld/mysqld.sock --silent 2>/dev/null; then
     echo "Backing up MySQL database..."
-    
+
     # First try with TCP connection on specified port (for Docker or custom port setups)
     if mysql -h localhost -P ${DB_PORT} -u ${DB_USER} -p${DB_PASSWORD} \
         -e "SELECT 1" >/dev/null 2>&1; then
@@ -46,7 +49,7 @@ if mysqladmin ping -h localhost -P ${DB_PORT} --silent 2>/dev/null || \
         echo "✓ Backup saved to database_backup.sql (via TCP port ${DB_PORT})"
         exit 0
     fi
-    
+
     # Fallback to root user with TCP if appuser doesn't work
     if mysql -h localhost -P ${DB_PORT} -u root -p${DB_PASSWORD} \
         -e "SELECT 1" >/dev/null 2>&1; then
@@ -57,7 +60,7 @@ if mysqladmin ping -h localhost -P ${DB_PORT} --silent 2>/dev/null || \
         echo "✓ Backup saved to database_backup.sql (via TCP port ${DB_PORT} as root)"
         exit 0
     fi
-    
+
     # Final fallback to socket connection for standard MySQL installations
     if sudo mysql --socket=/var/run/mysqld/mysqld.sock \
         -u root -p${DB_PASSWORD} -e "SELECT 1" >/dev/null 2>&1; then
@@ -68,7 +71,7 @@ if mysqladmin ping -h localhost -P ${DB_PORT} --silent 2>/dev/null || \
         echo "✓ Backup saved to database_backup.sql (via socket)"
         exit 0
     fi
-    
+
     # Try without password for local root
     if sudo mysql --socket=/var/run/mysqld/mysqld.sock \
         -u root -e "SELECT 1" >/dev/null 2>&1; then
@@ -79,7 +82,7 @@ if mysqladmin ping -h localhost -P ${DB_PORT} --silent 2>/dev/null || \
         echo "✓ Backup saved to database_backup.sql (via socket, no password)"
         exit 0
     fi
-    
+
     echo "⚠ MySQL is running but authentication failed"
     echo "  Please check your credentials"
     exit 1

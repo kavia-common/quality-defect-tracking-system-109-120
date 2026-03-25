@@ -1,4 +1,12 @@
 # SQLite connection methods:
-# Python: sqlite3.connect('myapp.db')
-# Connection string: sqlite:////home/kavia/workspace/code-generation/quality-defect-tracking-system-109-120/database/myapp.db
-# File path: /home/kavia/workspace/code-generation/quality-defect-tracking-system-109-120/database/myapp.db
+# Canonical DB file (used by Django + tooling):
+#   /home/kavia/workspace/code-generation/quality-defect-tracking-system-109-120/database/myapp.db
+#
+# Python:
+#   sqlite3.connect('/home/kavia/workspace/code-generation/quality-defect-tracking-system-109-120/database/myapp.db')
+#
+# Connection string:
+#   sqlite:////home/kavia/workspace/code-generation/quality-defect-tracking-system-109-120/database/myapp.db
+#
+# File path:
+#   /home/kavia/workspace/code-generation/quality-defect-tracking-system-109-120/database/myapp.db
